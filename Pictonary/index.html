@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pictonary</title>
+</head>
+<body style="background-image: url(img/im3.jpg); background-size: cover; background-repeat: no-repeat">
+  <style>
+
+  *{
+      border: 0;
+      margin: 0;
+      padding: 0;
+
+  }
+    canvas {
+      border: 15px solid aqua;
+
+            width: 500px;
+            height: 500px;
+            background-color:  #000117;
+        
+  }
+
+
+
+ 
+
+</style>
+
+
+<canvas id="pizarra"></canvas>
+
+<script>
+    //======================================================================
+    // VARIABLES
+    //======================================================================
+    let miCanvas = document.querySelector('#pizarra');
+    let lineas = [];
+    let correccionX = 0;
+    let correccionY = 0;
+    let pintarLinea = false;
+    // Marca el nuevo punto
+    let nuevaPosicionX = 0;
+    let nuevaPosicionY = 0;
+
+    let posicion = miCanvas.getBoundingClientRect()
+    correccionX = posicion.x;
+    correccionY = posicion.y;
+
+    miCanvas.width = 500;
+    miCanvas.height = 500;
+
+    //======================================================================
+    // FUNCIONES
+    //======================================================================
+
+    /**
+     * Funcion que empieza a dibujar la linea
+     */
+    function empezarDibujo () {
+        pintarLinea = true;
+        lineas.push([]);
+    };
+    
+    /**
+     * Funcion que guarda la posicion de la nueva línea
+     */
+    function guardarLinea() {
+        lineas[lineas.length - 1].push({
+            x: nuevaPosicionX,
+            y: nuevaPosicionY
+        });
+    }
+
+    /**
+     * Funcion dibuja la linea
+     */
+    function dibujarLinea (event) {
+        event.preventDefault();
+        if (pintarLinea) {
+            let ctx = miCanvas.getContext('2d')
+            // Estilos de linea
+            ctx.lineJoin = ctx.lineCap = 'round';
+            ctx.lineWidth = 10;
+            // Color de la linea
+            ctx.strokeStyle = '#8400ff';
+            // Marca el nuevo punto
+            if (event.changedTouches == undefined) {
+                // Versión ratón
+                nuevaPosicionX = event.layerX;
+                nuevaPosicionY = event.layerY;
+            } 
+            // Guarda la linea
+            guardarLinea();
+            // Redibuja todas las lineas guardadas
+            ctx.beginPath();
+            lineas.forEach(function (segmento) {
+                ctx.moveTo(segmento[0].x, segmento[0].y);
+                segmento.forEach(function (punto, index) {
+                    ctx.lineTo(punto.x, punto.y);
+                });
+            });
+            ctx.stroke();
+        }
+    }
+
+    /**
+     * Funcion que deja de dibujar la linea
+     */
+
+    function pararDibujar () {
+        pintarLinea = false;
+        guardarLinea();
+    }
+
+    //======================================================================
+    // EVENTOS
+    //======================================================================
+
+    // Eventos raton
+    miCanvas.addEventListener('mousedown', empezarDibujo, false);
+    miCanvas.addEventListener('mousemove', dibujarLinea, false);
+    miCanvas.addEventListener('mouseup', pararDibujar, false);
+
+</script>
+<style>
+    *{
+      border: 0;
+      margin: 0;
+      padding: 0;
+    }
+    input[type="text"]{
+            width: 98%;
+            height: 50px;
+            border: 1px solid rgb(70, 226, 9);
+            background-color: aqua;
+            border-radius: 5px;
+            padding: 0 10px;
+            font-size: 20px;
+            color: #000117;
+            
+            margin-top: 20px;
+        }
+        input[type="button"]{
+            width: 100%;
+            height: 50px;
+            border: 1px solid rgb(220, 43, 43);
+            background-color: purple;
+            border-radius: 5px;
+            padding: 0 10px;
+            font-size: 20px;
+            margin-top: 20px;
+        }
+
+
+        
+  </style>
+<section>
+  <input type="text" id="Text" placeholder="¿Que es?">
+  <input type="button" id="boton" value="Comprobar"> <br>
+  <input type="button" id="botonlim" value="Limpiar Y Intentar de nuevo"> <br>
+  <input type="button" id="boton ir" value="Ver Score"> <br>
+</section>
+
+<script type="text/javascript">
+
+let dibujos= Array("Casa","Arbol","Gato","Perro","Carro","Leon","Caballo","Lapiz","Cerdo");
+let dibujoElegido = dibujos[Math.floor(Math.random() * dibujos.length)];
+let Padivinada=10;
+document.getElementById("boton").addEventListener("click", comprobar);
+document.getElementById("botonlim").addEventListener("click", limpiar);
+document.getElementById("boton ir").addEventListener("click", ir);
+
+iniciar();
+
+//======================================================================
+// FUNCIONES
+function iniciar() {
+   alert("Dibuja lo siguiente dibujo: " + dibujoElegido);
+}
+
+// Comprobar si adivino el dibujo
+function comprobar() {
+    let dibujo = document.getElementById("Text").value;
+    if (dibujoElegido == dibujo) {
+        alert("¡Congratulation!" +" "+ "Win 10 Poins");
+    } else {
+        alert("¡Sorry!#" +" "+ "Continue participating");
+        return iniciar();
+    }
+}
+//limpiar pizarra
+function limpiar() {
+    let canvas = document.querySelector('#pizarra');
+    let ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    lineas = [];
+    iniciar();
+}
+//cambio de pagina
+function ir() {
+    window.location.href = "tabla.html";
+}
+
+</script>
+</body>
+</html>
